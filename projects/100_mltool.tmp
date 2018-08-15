@@ -1,0 +1,7 @@
+<section>
+<h2>mltool</h2>
+<h3>Machine Learning Toolkit</h3>
+<p>Haskell Machine Learning Toolkit includes various methods of supervised learning: linear regression, logistic regression, SVN, neural networks, etc. as well as some methods of unsupervised methods: K-Means and PCA.</p>
+<p>Related tags: </p>
+<p>Source code: <a href="https://github.com/aligusnet/mltool">github</a></p>
+</section>

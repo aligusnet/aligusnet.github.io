@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>AI - 18 June 2018</title>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+        <link rel="stylesheet" href="../css/default.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        
+    </head>
+    <body>
+        <header class="global">
+          <div class="wrapper">
+            <div class="logo"><a href="../">AI</a></div>
+            <nav>
+              <div class="mobile-menu-icon fa fa-bars fa-lg"></div>
+              <div><a href="../">Home</a></div>
+              <div><a href="../projects.html">Projects</a></div>
+              <div><a href="../archive.html">Archive</a></div>
+              <div><a href="../tea-meetup-history.html">Tea Meetup</a></div>
+              <div><a href="../astro.html">Astro</a></div>
+              <div><a href="../stats.html">Stats</a></div>
+            </nav>
+          </div>
+        </header>
+
+        <main>
+            <h1>18 June 2018</h1>
+            <div class="info">
+    Posted on 20 June 2018
+    
+        by Alexander Ignatyev
+    
+</div>
+
+<h2 id="abss-issue">abs()’s issue</h2>
+<p>abs() function ins C/C++ is not defined for minimum negative int as the standard says:</p>
+<blockquote>
+<p>The abs, labs, and llabs functions compute the absolute value of an integer j. If the result cannot be represented, the behavior is undefined.</p>
+</blockquote>
+<p>gcc returns the same value in this case.</p>
+<h2 id="heaps-data-structure">Heap’s data structure</h2>
+<p>Heap’s implementations do not have some useful functions like <code>change_key</code> or <code>remove_element</code> in many languages. E.g. in <a href="http://www.cplusplus.com/reference/algorithm/make_heap/">C++</a> and <a href="https://docs.python.org/3.7/library/heapq.html">Python</a>.</p>
+<p>Go’s implementaion actualy has both of the functions named as Fix() and Remove(): <a href="https://golang.org/pkg/container/heap/">Package heap</a>.</p>
+<h2 id="combining-hash-values">Combining hash values</h2>
+<p><code>XOR</code> is not always the best choice to combine hash values. E.g. for a pair of int it will always returns 0 if values are the same.</p>
+<p>Boost uses the following approach to avoid such collisions:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">template</span> &lt;<span class="kw">class</span> T&gt;</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">inline</span> <span class="dt">void</span> hash_combine(<span class="bu">std::</span>size_t&amp; seed, <span class="at">const</span> T&amp; v)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">{</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">    <span class="bu">std::</span>hash&lt;T&gt; hasher;</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5">    seed ^= hasher(v) + <span class="bn">0x9e3779b9</span> + (seed&lt;&lt;<span class="dv">6</span>) + (seed&gt;&gt;<span class="dv">2</span>);</a>
+<a class="sourceLine" id="cb1-6" data-line-number="6">}</a></code></pre></div>
+<p><code>seed</code> is a previous result of <code>hasher</code> or this algorithm.</p>
+<p>Some good advices are available in <a href="https://www.javamex.com/tutorials/collections/hash_function_guidelines.shtml">Writing a hash function in Java: a practical guide to implementing hashCode()</a> (suitable not only for Java, of course).</p>
+<h2 id="facebooks-reasonml">Facebook’s ReasonML</h2>
+<p>Facebook decided to create Frankenstein: a hybrid of JavaScript and ML. It looks a bit scary to me:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode js"><code class="sourceCode javascript"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co">// A FizzBuzz implementation in ReasonML</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">let</span> fizzbuzz <span class="op">=</span> (i) <span class="op">=&gt;</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">  <span class="cf">switch</span> ([i mod <span class="dv">3</span><span class="op">,</span> i mod <span class="dv">5</span>]) <span class="op">{</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">    <span class="op">|</span> [<span class="dv">0</span><span class="op">,</span> <span class="dv">0</span>] <span class="op">=&gt;</span> <span class="st">&quot;FizzBuzz&quot;</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5">    <span class="op">|</span> [<span class="dv">0</span><span class="op">,</span> _] <span class="op">=&gt;</span> <span class="st">&quot;Fizz&quot;</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6">    <span class="op">|</span> [_<span class="op">,</span> <span class="dv">0</span>] <span class="op">=&gt;</span> <span class="st">&quot;Buzz&quot;</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7">    <span class="op">|</span> _    <span class="op">=&gt;</span> <span class="at">string_of_int</span>(i)</a>
+<a class="sourceLine" id="cb2-8" data-line-number="8">  <span class="op">};</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="cf">for</span> (i <span class="kw">in</span> <span class="dv">1</span> to <span class="dv">100</span>) <span class="op">{</span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11">  <span class="at">print_endline</span>(<span class="at">fizzbuzz</span>(i))<span class="op">;</span></a>
+<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="op">};</span></a></code></pre></div>
+<p>This piece of code taken from the article: <a href="https://www.imaginarycloud.com/blog/reasonml-react-as-first-intended/">ReasonML - React as first intended</a>.</p>
+<h2 id="ml-family">ML family</h2>
+<p>There are quite a few languages in ML family:</p>
+<ul>
+<li><p><a href="https://en.wikipedia.org/wiki/Standard_M">Standard ML</a>;</p></li>
+<li><p><a href="https://ocaml.org">OCaml</a> - ML with Object Oriented features;</p></li>
+<li><p><a href="https://fsharp.org">F#</a> - better version of OCaml (IMHO);</p></li>
+<li><p><a href="https://bucklescript.github.io">BuckleScript</a> - OCaml’s compiler to JavaScript;</p></li>
+<li><p><a href="http://fable.io">Fable</a> - F#’s compiler to JavaScript;</p></li>
+<li><p><a href="http://elm-lang.org">Elm</a> - Haskell mutated into something ML-like, compiles to JavaScript.</p></li>
+</ul>
+
+        </main>
+
+        <footer>
+            <i class="fa fa-copyright" aria-hidden="true"></i> 2017-2018 Alexander Ignatyev
+        </footer>
+
+        <script src="../js/scripts.js"></script>
+    </body>
+</html>

@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>AI - Comparing different implementations of Branch and Bound Method</title>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+        <link rel="stylesheet" href="../css/default.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        
+    </head>
+    <body>
+        <header class="global">
+          <div class="wrapper">
+            <div class="logo"><a href="../">AI</a></div>
+            <nav>
+              <div class="mobile-menu-icon fa fa-bars fa-lg"></div>
+              <div><a href="../">Home</a></div>
+              <div><a href="../projects.html">Projects</a></div>
+              <div><a href="../archive.html">Archive</a></div>
+              <div><a href="../tea-meetup-history.html">Tea Meetup</a></div>
+              <div><a href="../astro.html">Astro</a></div>
+              <div><a href="../stats.html">Stats</a></div>
+            </nav>
+          </div>
+        </header>
+
+        <main>
+            <h1>Comparing different implementations of Branch and Bound Method</h1>
+            <div class="info">
+    Posted on  1 July 2014
+    
+        by Alexander Ignatyev
+    
+</div>
+
+<p><a href="https://github.com/Alexander-Ignatyev/optimer">Optimer library</a> is used as reference implementation.</p>
+<p>The results of the reference implementation are presented in the third column “time (s.)”. Results of other implementations are presented in columns with names “(n)”, where n is a reference number of the implementation. Please see below the table to get the full list of the implementations.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Problem</th>
+<th># of cities</th>
+<th>time (s.)</th>
+<th># of cores</th>
+<th>(1)</th>
+<th>(2)</th>
+<th>(3)</th>
+<th>(3) - Concorde</th>
+<th>(4)</th>
+<th>(5)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>br17</td>
+<td>17</td>
+<td>2.891</td>
+<td>8</td>
+<td>3</td>
+<td>4.18</td>
+<td>–</td>
+<td>–</td>
+<td>6.937</td>
+<td>1256.524</td>
+</tr>
+<tr class="even">
+<td>ft53</td>
+<td>53</td>
+<td>57.136</td>
+<td>8</td>
+<td>–</td>
+<td>2.53</td>
+<td>0.44</td>
+<td>0.27</td>
+<td>–</td>
+<td>–</td>
+</tr>
+<tr class="odd">
+<td>ft70</td>
+<td>70</td>
+<td>0.078</td>
+<td>2</td>
+<td>–</td>
+<td>1.87</td>
+<td>1.51</td>
+<td>–</td>
+<td>–</td>
+<td>147.265</td>
+</tr>
+<tr class="even">
+<td>ftv33</td>
+<td>34</td>
+<td>0.004</td>
+<td>4</td>
+<td>–</td>
+<td>0.11</td>
+<td>0.01</td>
+<td>–</td>
+<td>3.94</td>
+<td>0.156</td>
+</tr>
+<tr class="odd">
+<td>ftv35</td>
+<td>36</td>
+<td>0.007</td>
+<td>8</td>
+<td>–</td>
+<td>0.22</td>
+<td>0.46</td>
+<td>–</td>
+<td>97.425</td>
+<td>0.031</td>
+</tr>
+<tr class="even">
+<td>ftv38</td>
+<td>39</td>
+<td>0.012</td>
+<td>8</td>
+<td>–</td>
+<td>0.22</td>
+<td>0.51</td>
+<td>–</td>
+<td>382.958</td>
+<td>0.031</td>
+</tr>
+<tr class="odd">
+<td>ftv44</td>
+<td>45</td>
+<td>0.008</td>
+<td>4</td>
+<td>–</td>
+<td>0.05</td>
+<td>0.06</td>
+<td>–</td>
+<td>–</td>
+<td>0.078</td>
+</tr>
+<tr class="even">
+<td>ftv47</td>
+<td>48</td>
+<td>0.041</td>
+<td>8</td>
+<td>–</td>
+<td>1.37</td>
+<td>2.07</td>
+<td>–</td>
+<td>–</td>
+<td>0.406</td>
+</tr>
+<tr class="odd">
+<td>ftv55</td>
+<td>56</td>
+<td>0.347</td>
+<td>8</td>
+<td>6</td>
+<td>4.56</td>
+<td>10.59</td>
+<td>–</td>
+<td>–</td>
+<td>2.437</td>
+</tr>
+<tr class="even">
+<td>ftv64</td>
+<td>65</td>
+<td>0.191</td>
+<td>8</td>
+<td>–</td>
+<td>3.24</td>
+<td>1.56</td>
+<td>30.21</td>
+<td>–</td>
+<td>1.984</td>
+</tr>
+<tr class="odd">
+<td>ftv70</td>
+<td>71</td>
+<td>0.301</td>
+<td>8</td>
+<td>9</td>
+<td>8.57</td>
+<td>4.89</td>
+<td>8.43</td>
+<td>–</td>
+<td>8.203</td>
+</tr>
+<tr class="even">
+<td>ftv90</td>
+<td>91</td>
+<td>0.077</td>
+<td>8</td>
+<td>–</td>
+<td>1.54</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>1.484</td>
+</tr>
+<tr class="odd">
+<td>ftv100</td>
+<td>101</td>
+<td>0.975</td>
+<td>8</td>
+<td>–</td>
+<td>21.87</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+</tr>
+<tr class="even">
+<td>ftv110</td>
+<td>111</td>
+<td>1.291</td>
+<td>8</td>
+<td>–</td>
+<td>89.56</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+</tr>
+<tr class="odd">
+<td>ftv120</td>
+<td>121</td>
+<td>8.453</td>
+<td>8</td>
+<td>–</td>
+<td>305.71</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+</tr>
+<tr class="even">
+<td>ftv130</td>
+<td>131</td>
+<td>0.421</td>
+<td>8</td>
+<td>–</td>
+<td>19.01</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>114.265</td>
+</tr>
+<tr class="odd">
+<td>ftv140</td>
+<td>141</td>
+<td>0.756</td>
+<td>8</td>
+<td>–</td>
+<td>13.3</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>108.375</td>
+</tr>
+<tr class="even">
+<td>ftv150</td>
+<td>151</td>
+<td>0.402</td>
+<td>8</td>
+<td>–</td>
+<td>4.67</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>132.078</td>
+</tr>
+<tr class="odd">
+<td>ftv160</td>
+<td>161</td>
+<td>8.328</td>
+<td>8</td>
+<td>–</td>
+<td>496.92</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>3771.093</td>
+</tr>
+<tr class="even">
+<td>ftv170</td>
+<td>171</td>
+<td>39.827</td>
+<td>8</td>
+<td>480</td>
+<td>656.59</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+</tr>
+<tr class="odd">
+<td>kro124p</td>
+<td>100</td>
+<td>219.555</td>
+<td>8</td>
+<td>–</td>
+<td>Not</td>
+<td>1000+</td>
+<td>5.61</td>
+<td>–</td>
+<td>3505.406</td>
+</tr>
+<tr class="even">
+<td>rbg323</td>
+<td>323</td>
+<td>0.306</td>
+<td>2</td>
+<td>–</td>
+<td>0</td>
+<td>–</td>
+<td>–</td>
+<td>0.034</td>
+<td>2.968</td>
+</tr>
+<tr class="odd">
+<td>rbg358</td>
+<td>358</td>
+<td>0.393</td>
+<td>2</td>
+<td>–</td>
+<td>0</td>
+<td>0.03</td>
+<td>–</td>
+<td>0.042</td>
+<td>7.328</td>
+</tr>
+<tr class="even">
+<td>rbg403</td>
+<td>403</td>
+<td>0.602</td>
+<td>2</td>
+<td>–</td>
+<td>0.05</td>
+<td>–</td>
+<td>847.1</td>
+<td>0.079</td>
+<td>5.484</td>
+</tr>
+<tr class="odd">
+<td>rbg443</td>
+<td>443</td>
+<td>0.734</td>
+<td>2</td>
+<td>–</td>
+<td>0.05</td>
+<td>0.05</td>
+<td>81.62</td>
+<td>0.079</td>
+<td>3.578</td>
+</tr>
+<tr class="even">
+<td>ry48p</td>
+<td>48</td>
+<td>15.908</td>
+<td>8</td>
+<td>–</td>
+<td>105.88</td>
+<td>77.35</td>
+<td>11.39</td>
+<td>–</td>
+<td>54.406</td>
+</tr>
+<tr class="odd">
+<td>p43</td>
+<td>43</td>
+<td>2280*</td>
+<td>8</td>
+<td>4800</td>
+<td>Not</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+</tr>
+</tbody>
+</table>
+<ol type="1">
+<li>AV Tyulenev, Application of integer linear programming with sequential elimination of cycles to solve the traveling salesman problem. 2012</li>
+<li>Marcel Turkensteen, Diptesh Ghosh, Boris Goldengorin, Gerard Sierksma. Tolerance-based Branch and Bound algorithms for the ATSP. 2008.<br />
+</li>
+<li>Remco Germs, Boris Goldengorin, Marcel Turkenstee. Lower tolerance-based Branch and Bound algorithms for the ATSP. 2012<br />
+</li>
+<li>Pessoa, Tiago Carneiro. Estratégias paralelas inteligentes para o método branch-and- bound aplicadas ao problema do caixeiro viajante assimétrico. 2012.<br />
+</li>
+<li>IF Borhanov, VR Fazylov, “Little’s method with optimal matrix reduction”, Physics and mathematics, Cat. App. Kazan. State. University. Ser. Phys.-Math. Science, 148, No. 4, Kazan Univ., Kazan, 2006, 13-22</li>
+</ol>
+
+
+<div class="tags">Tags: <a href="../tag/optimer.html">optimer</a></div>
+
+
+        </main>
+
+        <footer>
+            <i class="fa fa-copyright" aria-hidden="true"></i> 2017-2018 Alexander Ignatyev
+        </footer>
+
+        <script src="../js/scripts.js"></script>
+    </body>
+</html>

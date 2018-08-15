@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>AI - PCA</title>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+        <link rel="stylesheet" href="../css/default.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        
+    </head>
+    <body>
+        <header class="global">
+          <div class="wrapper">
+            <div class="logo"><a href="../">AI</a></div>
+            <nav>
+              <div class="mobile-menu-icon fa fa-bars fa-lg"></div>
+              <div><a href="../">Home</a></div>
+              <div><a href="../projects.html">Projects</a></div>
+              <div><a href="../archive.html">Archive</a></div>
+              <div><a href="../tea-meetup-history.html">Tea Meetup</a></div>
+              <div><a href="../astro.html">Astro</a></div>
+              <div><a href="../stats.html">Stats</a></div>
+            </nav>
+          </div>
+        </header>
+
+        <main>
+            <h1>PCA</h1>
+            <div class="info">
+    Posted on  1 July 2018
+    
+        by Alexander Ignatyev
+    
+</div>
+
+<p><img width="192" alt=" f(x)=\sum_{n=0}^\infty\frac{f^{(n)}(a)}{n!}(x-a)^n " height="45" src="data:image/png;base64,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" class="display-math" style="margin:0; vertical-align:-20px;" /></p>
+
+
+<div class="tags">Tags: <a href="../tag/math.html">math</a></div>
+
+
+        </main>
+
+        <footer>
+            <i class="fa fa-copyright" aria-hidden="true"></i> 2017-2018 Alexander Ignatyev
+        </footer>
+
+        <script src="../js/scripts.js"></script>
+    </body>
+</html>

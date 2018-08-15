@@ -1,0 +1,8 @@
+<section>
+<h2>FsStats</h2>
+<h3>Basic statistics with some probability library</h3>
+<p>Includes common distributions (Bernoulli, Binomial, Poisson, Student’s and Normal), random number generators from some of the distributions, summary statistics for a sample, Z-Test, Student’s T-Test, special functions (Error, Gamma, Beta and Regularized Incomplete Beta).</p>
+<p>Web UI: <a href="../stats.html">Statistics</a>.</p>
+<p>Related tags: </p>
+<p>Source code: <a href="https://github.com/aligusnet/FsStats">github</a></p>
+</section>

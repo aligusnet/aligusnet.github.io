@@ -1,0 +1,7 @@
+<section>
+<h2>Raft</h2>
+<h3>Implementation of a consensus algorithm Raft</h3>
+<p>The implementation supports basic features of the algorithm: leader election and log replication.</p>
+<p>Related tags: </p>
+<p>Source code: <a href="https://github.com/aligusnet/raft">github</a></p>
+</section>

@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>AI - The Haskell Cabal</title>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+        <link rel="stylesheet" href="../css/default.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        
+    </head>
+    <body>
+        <header class="global">
+          <div class="wrapper">
+            <div class="logo"><a href="../">AI</a></div>
+            <nav>
+              <div class="mobile-menu-icon fa fa-bars fa-lg"></div>
+              <div><a href="../">Home</a></div>
+              <div><a href="../projects.html">Projects</a></div>
+              <div><a href="../archive.html">Archive</a></div>
+              <div><a href="../tea-meetup-history.html">Tea Meetup</a></div>
+              <div><a href="../astro.html">Astro</a></div>
+              <div><a href="../stats.html">Stats</a></div>
+            </nav>
+          </div>
+        </header>
+
+        <main>
+            <h1>The Haskell Cabal</h1>
+            <div class="info">
+    Posted on  2 June 2016
+    
+        by Alexander Ignatyev
+    
+</div>
+
+<p>Cabal is a build and package manager for Haskell. It is considered as slightly outdated in modern Haskell development. Mostly because the new system called Stack has been introduced. But Stack uses Cabal under the hood and understanding of how Cabal works might be useful even if you use Stack for building and packaging.</p>
+<h2 id="quick-reference">Quick reference</h2>
+<h3 id="sandboxes">Sandboxes</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="ex">cabal</span> sandbox init  # to create new sandbox</a></code></pre></div>
+<h3 id="projects">Projects</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="ex">cabal</span> init <span class="co"># to create new project</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="ex">cabal</span> install --enable-tests -j <span class="co"># to install dependencies and enable unit testing</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="ex">cabal</span> build <span class="co"># to build the project</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="ex">cabal</span> run  # to run executable</a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="ex">cabal</span> test  # to run unit tests</a></code></pre></div>
+<h3 id="project-config">Project config</h3>
+<pre><code>name:                cabal-project
+version:             0.1.0.0
+-- synopsis:            
+-- description:         
+license:             MIT
+license-file:        LICENSE
+author:              Alexander Ignatyev
+maintainer:          ignatyev.alexander@gmail.com
+-- copyright:           
+-- category:            
+build-type:          Simple
+-- extra-source-files:  
+cabal-version:       &gt;=1.10
+
+library
+  exposed-modules:     Fib
+  -- other-modules:       
+  -- other-extensions:    
+  build-depends:       base &gt;=4.8 &amp;&amp; &lt;4.9
+  hs-source-dirs:      src
+  default-language:    Haskell2010
+
+executable fib
+  main-is:                 Main.hs
+  build-depends:       base &gt;=4.8 &amp;&amp; &lt;4.9
+                        , cabal-project
+  hs-source-dirs:       app
+  default-language:   Haskell2010
+
+test-suite tests
+  type:                exitcode-stdio-1.0
+  main-is:             HUnitTests.hs
+  hs-source-dirs:      tests, src
+  build-depends:       base &gt;=4.8 &amp;&amp; &lt;4.9
+                        , HUnit
+  default-language:    Haskell2010</code></pre>
+<h2 id="cabal-hell-and-sandboxes.">Cabal Hell and sandboxes.</h2>
+<p>Cabal is considered as difficult to use due to the issue called “dependency hell”, in which cabal is not able to install desired package because of some dependency conflicts. Resolving these conflict might require a large amount of work or may be even impossible. In most cases conflicts can be resolved by easing version bounds. The probability of version conflicts is much higher if you use global storage for Haskell libraries. Resolving version conflicts can require packages removals and reinstalls. These operation much easier to perform using private storage for libraries.</p>
+<p>This is exactly why cabal sandbox was introduced. Usually I create a new sandbox as a start for new Haskell experiment or project.</p>
+<p>So to create a new sandbox you just need to run:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="fu">mkdir</span> my_sanbox <span class="kw">&amp;&amp;</span> <span class="bu">cd</span> my_sanbox</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="ex">cabal</span> sandbox init</a></code></pre></div>
+<p>All following cabal operations in <code>my_sandbox</code> directory will be performed in the sandbox.</p>
+<p>One remark regarding executables from cabal packages. If you install a cabal package into the sandbox, executables are placed in the dir .cabal_sandbox/bin. You can run an executable right from this directory or use:</p>
+<pre><code>cabal exec &lt;executable-name&gt;</code></pre>
+<h2 id="using-cabal-to-setup-a-new-haskell-project">Using Cabal to setup a new Haskell project</h2>
+<p>The command</p>
+<pre><code>cabal init</code></pre>
+<p>starts an interactive session or a wizard to create new Haskell project.</p>
+<p>Defaults answers in the interactive session should be good enough but with 3 remarks:</p>
+<ol type="1">
+<li><p>you need to choose project license otherwise cabal will refuse to build the project;</p></li>
+<li><p>specify source directory as <code>src</code>;</p></li>
+<li><p>It is better to select project type as library even if you going to create executable because it is always good practice to put logic of the application in the library and leave for the application only UI code that calls library functions.</p></li>
+</ol>
+<p>As a result of running <code>cabal init</code> a few files will be created, the most important of them is a project file:<code>&lt;project_name&gt;.cabal</code>. There is an example of a project file:</p>
+<pre><code>name:                cabal-project
+version:             0.1.0.0
+-- synopsis:            
+-- description:         
+license:             MIT
+license-file:        LICENSE
+author:              Alexander Ignatyev
+maintainer:          my-email@my-email.com
+-- copyright:           
+-- category:            
+build-type:          Simple
+-- extra-source-files:  
+cabal-version:       &gt;=1.10
+
+library
+  -- exposed-modules:     
+  -- other-modules:       
+  -- other-extensions:    
+  build-depends:       base &gt;=4.8 &amp;&amp; &lt;4.9
+  hs-source-dirs:      src</code></pre>
+<p>Let’s quickly go through the file. It contains 2 sections, the unnamed section with common information regarding the package: name, version, license, author etc. The following section library contains:</p>
+<ul>
+<li>exposed-modules with the list of exported modules of the library, every module that library client is intended to use must be explicitly listed here</li>
+<li>build-depends with the list of external packages with optimal versions bounds</li>
+<li>hs-source-dirs defines list of firs contain Haskell source code.</li>
+</ul>
+<p>E.g. if we would like to expose module Data.BinaryTree from the library we should create at least src/Data/BinaryTree.hs file.</p>
+<h2 id="adding-executables">Adding Executables</h2>
+<p>Every cabal project can contains only one library but as many executable as you wish.</p>
+<p>First of all, let us add some library code. For example, naive implementation of Fibonacci numbers:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="co">-- src/Fib.hs</span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw">module</span> <span class="dt">Fib</span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3">(</a>
+<a class="sourceLine" id="cb8-4" data-line-number="4">  fib</a>
+<a class="sourceLine" id="cb8-5" data-line-number="5">)</a>
+<a class="sourceLine" id="cb8-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="kw">where</span></a>
+<a class="sourceLine" id="cb8-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb8-9" data-line-number="9">fib <span class="dv">0</span> <span class="fu">=</span> <span class="dv">0</span></a>
+<a class="sourceLine" id="cb8-10" data-line-number="10">fib <span class="dv">1</span> <span class="fu">=</span> <span class="dv">1</span></a>
+<a class="sourceLine" id="cb8-11" data-line-number="11">fib n <span class="fu">=</span> fib (n<span class="fu">-</span><span class="dv">1</span>) <span class="fu">+</span> fib (n<span class="fu">-</span><span class="dv">2</span>)</a></code></pre></div>
+<p>and add the module to the list of exposed modules:</p>
+<pre><code>exposed-modules:    Fib</code></pre>
+<p>Not create a simple application that takes a list of numbers and calculate Fibonacci numbers for them. Put the code into <code>app/Main.hs</code> file:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="co">-- app/Main.hs</span></a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span></a>
+<a class="sourceLine" id="cb10-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="kw">import</span> <span class="dt">Fib</span> (fib)</a>
+<a class="sourceLine" id="cb10-5" data-line-number="5"><span class="kw">import</span> <span class="dt">System.Environment</span> (getArgs)</a>
+<a class="sourceLine" id="cb10-6" data-line-number="6"><span class="kw">import</span> <span class="dt">Control.Monad</span> (forM_)</a>
+<a class="sourceLine" id="cb10-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb10-8" data-line-number="8">main <span class="fu">=</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb10-9" data-line-number="9">  args <span class="ot">&lt;-</span> getArgs</a>
+<a class="sourceLine" id="cb10-10" data-line-number="10">  forM_ args <span class="fu">$</span> print <span class="fu">.</span> fib <span class="fu">.</span> read</a></code></pre></div>
+<p>and add new <code>executable</code> section to the project file</p>
+<p>After all changes out project file should looks like:</p>
+<pre><code>name:                cabal-project
+version:             0.1.0.0
+-- synopsis:            
+-- description:         
+license:             MIT
+license-file:        LICENSE
+author:              Alexander Ignatyev
+maintainer:          ignatyev.alexander@gmail.com
+-- copyright:           
+-- category:            
+build-type:          Simple
+-- extra-source-files:  
+cabal-version:       &gt;=1.10
+
+library
+  exposed-modules:     Fib
+  -- other-modules:       
+  -- other-extensions:    
+  build-depends:       base &gt;=4.8 &amp;&amp; &lt;4.9
+  hs-source-dirs:      src
+  default-language:    Haskell2010
+
+executable fib
+  main-is:             Main.hs
+  build-depends:       base &gt;=4.8 &amp;&amp; &lt;4.9
+                     , cabal-project
+  hs-source-dirs:      app
+  default-language:    Haskell2010</code></pre>
+<p>Take into account: * how we specify a source file with <code>main</code> function using <code>main-is</code> property; * a source dir using <code>hs-source-dirs</code> and * build dependencies, one of them is our <code>cabal-project</code> library</p>
+<h2 id="adding-unit-tests">Adding Unit Tests</h2>
+<p>Let’s quickly go through the process of adding uni tests to Haskell project. There are a few of unit testing libraries available in Haskell. I chose HUnit just because it looks modern and sounds familiar. The simple unit tests of our Fibonacci function may look something like:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="co">-- tests/HUnitTests.hs</span></a>
+<a class="sourceLine" id="cb12-2" data-line-number="2"><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span></a>
+<a class="sourceLine" id="cb12-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="kw">import</span> <span class="dt">System.Exit</span> (exitSuccess, exitFailure)</a>
+<a class="sourceLine" id="cb12-5" data-line-number="5"><span class="kw">import</span> <span class="dt">Test.HUnit</span></a>
+<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="kw">import</span> <span class="dt">Fib</span> (fib)</a>
+<a class="sourceLine" id="cb12-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb12-8" data-line-number="8">fibTests <span class="fu">=</span> <span class="dt">TestList</span> [</a>
+<a class="sourceLine" id="cb12-9" data-line-number="9">    <span class="st">&quot;0&quot;</span> <span class="fu">~:</span> <span class="dv">0</span> <span class="fu">~=?</span> fib <span class="dv">0</span></a>
+<a class="sourceLine" id="cb12-10" data-line-number="10">  , <span class="st">&quot;1&quot;</span> <span class="fu">~:</span> <span class="dv">1</span> <span class="fu">~=?</span> fib <span class="dv">1</span></a>
+<a class="sourceLine" id="cb12-11" data-line-number="11">  , <span class="st">&quot;10&quot;</span> <span class="fu">~:</span> <span class="dv">55</span> <span class="fu">~=?</span> fib <span class="dv">10</span></a>
+<a class="sourceLine" id="cb12-12" data-line-number="12">  ]</a>
+<a class="sourceLine" id="cb12-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb12-14" data-line-number="14">tests <span class="fu">=</span> <span class="dt">TestList</span> [</a>
+<a class="sourceLine" id="cb12-15" data-line-number="15">  <span class="dt">TestLabel</span> <span class="st">&quot;Fib&quot;</span> fibTests</a>
+<a class="sourceLine" id="cb12-16" data-line-number="16">  ]</a>
+<a class="sourceLine" id="cb12-17" data-line-number="17"></a>
+<a class="sourceLine" id="cb12-18" data-line-number="18">main <span class="fu">=</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb12-19" data-line-number="19">  stats <span class="ot">&lt;-</span> runTestTT tests</a>
+<a class="sourceLine" id="cb12-20" data-line-number="20">  <span class="kw">if</span> (errors stats <span class="fu">+</span> failures stats <span class="fu">==</span> <span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb12-21" data-line-number="21">    <span class="kw">then</span> exitSuccess</a>
+<a class="sourceLine" id="cb12-22" data-line-number="22">    <span class="kw">else</span> exitFailure</a></code></pre></div>
+<p>Updated project file:</p>
+<pre><code>name:                cabal-project
+version:             0.1.0.0
+-- synopsis:            
+-- description:         
+license:             MIT
+license-file:        LICENSE
+author:              Alexander Ignatyev
+maintainer:          ignatyev.alexander@gmail.com
+-- copyright:           
+-- category:            
+build-type:          Simple
+-- extra-source-files:  
+cabal-version:       &gt;=1.10
+
+library
+  exposed-modules:     Fib
+  -- other-modules:       
+  -- other-extensions:    
+  build-depends:       base &gt;=4.8 &amp;&amp; &lt;4.9
+  hs-source-dirs:      src
+  default-language:    Haskell2010
+
+executable fib
+  main-is:                 Main.hs
+  build-depends:       base &gt;=4.8 &amp;&amp; &lt;4.9
+                        , cabal-project
+  hs-source-dirs:       app
+  default-language:   Haskell2010
+
+test-suite tests
+  type:                exitcode-stdio-1.0
+  main-is:             HUnitTests.hs
+  hs-source-dirs:      tests, src
+  build-depends:       base &gt;=4.8 &amp;&amp; &lt;4.9
+                        , HUnit
+  default-language:    Haskell2010</code></pre>
+<p>New section <code>test-suits</code> has the same structure as <code>executable</code> section with some differences.</p>
+<p>I personally prefer to specify <code>src</code> folder in <code>hs-source-dirs</code> parameter in contract to add tested library in <code>build-depends</code> because it allows to test not only exposed modules, but all modules of the library.</p>
+<p>Run the following command to install new packages (in our case HUnit) and enable unit testing:</p>
+<pre><code>cabal install --enable-tests -j</code></pre>
+<p>You do not really need to specify <code>--enable-tests</code> if you omit it cabal will enable tests for you after your first attempt to build and run tests.</p>
+<p>To run unit tests just execute the command:</p>
+<pre><code>cabal tests</code></pre>
+
+
+<div class="tags">Tags: <a href="../tag/haskell.html">haskell</a></div>
+
+
+        </main>
+
+        <footer>
+            <i class="fa fa-copyright" aria-hidden="true"></i> 2017-2018 Alexander Ignatyev
+        </footer>
+
+        <script src="../js/scripts.js"></script>
+    </body>
+</html>

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>AI - 30 June 2018</title>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+        <link rel="stylesheet" href="../css/default.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        
+    </head>
+    <body>
+        <header class="global">
+          <div class="wrapper">
+            <div class="logo"><a href="../">AI</a></div>
+            <nav>
+              <div class="mobile-menu-icon fa fa-bars fa-lg"></div>
+              <div><a href="../">Home</a></div>
+              <div><a href="../projects.html">Projects</a></div>
+              <div><a href="../archive.html">Archive</a></div>
+              <div><a href="../tea-meetup-history.html">Tea Meetup</a></div>
+              <div><a href="../astro.html">Astro</a></div>
+              <div><a href="../stats.html">Stats</a></div>
+            </nav>
+          </div>
+        </header>
+
+        <main>
+            <h1>30 June 2018</h1>
+            <div class="info">
+    Posted on 30 June 2018
+    
+        by Alexander Ignatyev
+    
+</div>
+
+<h2 id="singular-value-decomposition-svd">Singular-value decomposition (SVD)</h2>
+<p>Principal component analysis (PCA) makes SVD is quite a hot topic now. There are a large number of available resources on the Internet regarding SVD. This week Ilya Gvozdetsky and I reviewed some of them:</p>
+<ul>
+<li><p><a href="https://web.stanford.edu/~hastie/ElemStatLearn/">The Elements of Statistical Learning: Data Mining, Inference, and Prediction.</a> has a chapter devoted to PCA. It looked very promising at the beginning but actually its way of describing material might be mostly understood by only experts in the area.</p></li>
+<li><p><a href="http://www.mmds.org">Mining of Massive Datasets book with video lectures</a>. Chapter 11 Dimensionality Reduction explains SVD in details. Actually very good explanation including Power Iterations method to calculate eigenvectors and eigenvalues and a way to do SVD. With one missed piece. There is no recommendation in Power Iteration algorithm how to choose a random vector to decrease the chance that our vector is orthogonal to the eigenvector (use random vectors).</p></li>
+<li><p><a href="https://www.youtube.com/watch?v=EokL7E6o1AE">AMATH 301 Lecture: The Singular Value Decomposition (SVD)</a> is a fair lecture about SVD. Some important things are stressed. Although I have got an impression that the lecturer did not always completely understand what he was talking about (e.g. when he messed with shapes of the matrices).</p></li>
+</ul>
+<p>Our implementation of SVD using numpy: <a href="https://gist.github.com/aligusnet/a9d4738810d225a933a303d3746df5a8">svd.py</a>.</p>
+<h2 id="javascript-problem">JavaScript problem</h2>
+<p>I cannot help mentioning that JavaScript is a language a far away from being an ideal and this is a pity that it became standard de facto in the web. One possible workaround is to use a language having a translator to JavaScript or start using languages with compilers to <a href="https://webassembly.org/">WebAssembly</a>.</p>
+<p>There are quite a few choices for the first option (TypedScript, Elm, PureScript etc.) and a very limited number of choices for the second option: e.g. <a href="https://github.com/AssemblyScript/assemblyscript">AssemblyScript</a> which translates TypedScript.</p>
+<h2 id="etcd">ETCD</h2>
+<p><a href="https://coreos.com/etcd/">ETCD</a> is a distributed key-value store (like Redis), one cool thing about it is using <a href="https://raft.github.io/">Raft consensus algorithm</a>. Nice to know that more products adopting Raft.</p>
+<h2 id="charts-for-web-pages">Charts for web pages</h2>
+<p>Some links:</p>
+<ul>
+<li>Plotly.js https://plot.ly/javascript/</li>
+<li>elm-plot https://terezka.github.io/elm-plot/</li>
+</ul>
+<h2 id="some-links">Some links</h2>
+<ul>
+<li><a href="https://google-developers.appspot.com/machine-learning/crash-course/backprop-scroll/">Backpropogation algorithm from Google</a></li>
+<li><a href="https://www.microsoft.com/en-us/research/blog/announcing-microsoft-research-open-data-datasets-by-microsoft-research-now-available-in-the-cloud/?OCID=msr_blog_opendata_tw">Announcing Microsoft Research Open Data – Datasets by Microsoft Research now available in the cloud</a></li>
+</ul>
+
+        </main>
+
+        <footer>
+            <i class="fa fa-copyright" aria-hidden="true"></i> 2017-2018 Alexander Ignatyev
+        </footer>
+
+        <script src="../js/scripts.js"></script>
+    </body>
+</html>

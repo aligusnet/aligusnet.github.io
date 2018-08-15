@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>AI - Astronomical effects in Moonrise/Moonset calculations</title>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+        <link rel="stylesheet" href="../css/default.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        
+    </head>
+    <body>
+        <header class="global">
+          <div class="wrapper">
+            <div class="logo"><a href="../">AI</a></div>
+            <nav>
+              <div class="mobile-menu-icon fa fa-bars fa-lg"></div>
+              <div><a href="../">Home</a></div>
+              <div><a href="../projects.html">Projects</a></div>
+              <div><a href="../archive.html">Archive</a></div>
+              <div><a href="../tea-meetup-history.html">Tea Meetup</a></div>
+              <div><a href="../astro.html">Astro</a></div>
+              <div><a href="../stats.html">Stats</a></div>
+            </nav>
+          </div>
+        </header>
+
+        <main>
+            <h1>Astronomical effects in Moonrise/Moonset calculations</h1>
+            <div class="info">
+    Posted on  8 July 2017
+    
+        by Alexander Ignatyev
+    
+</div>
+
+<p>Among the other visible celestial objects the Moon is one of the most difficult to calculate.</p>
+<p>The are a number of reasons:</p>
+<ul>
+<li><p>The moon is affected by the gravity of the Earth and the Sun;</p></li>
+<li><p>it is a very close objects so we need to take into account the parallax effect;</p></li>
+<li><p>it is a big object in terms of angular size (true for the Sun as well);</p></li>
+<li><p>the refraction effect due to the Earth’s atmosphere (true for all celestial objects).</p></li>
+</ul>
+<p>Let’s take into account all these effect.</p>
+<p>First of all, define some of the values we will use below:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="ot">london ::</span> <span class="dt">GeographicCoordinates</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">london <span class="fu">=</span> <span class="dt">GeoC</span> <span class="fl">51.5074</span> (<span class="fu">-</span><span class="fl">0.1278</span>)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="ot">dt ::</span> <span class="dt">LocalCivilTime</span></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5">dt <span class="fu">=</span> lctFromYMDHMS (<span class="dt">DH</span> <span class="dv">1</span>) <span class="dv">2017</span> <span class="dv">7</span> <span class="dv">6</span> <span class="dv">10</span> <span class="dv">30</span> <span class="dv">0</span></a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="ot">today ::</span> <span class="dt">LocalCivilDate</span></a>
+<a class="sourceLine" id="cb1-8" data-line-number="8">today <span class="fu">=</span> lcdFromYMD (<span class="dt">DH</span> <span class="dv">1</span>) <span class="dv">2017</span> <span class="dv">7</span> <span class="dv">6</span></a>
+<a class="sourceLine" id="cb1-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb1-10" data-line-number="10"><span class="ot">jd ::</span> <span class="dt">JulianDate</span></a>
+<a class="sourceLine" id="cb1-11" data-line-number="11">jd <span class="fu">=</span> lctUniversalTime dt</a>
+<a class="sourceLine" id="cb1-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb1-13" data-line-number="13"><span class="co">-- distance from the Earth to the Moon in kilometres</span></a>
+<a class="sourceLine" id="cb1-14" data-line-number="14"><span class="ot">mdu ::</span> <span class="dt">MoonDistanceUnits</span></a>
+<a class="sourceLine" id="cb1-15" data-line-number="15">mdu <span class="fu">=</span> moonDistance1 j2010MoonDetails jd</a>
+<a class="sourceLine" id="cb1-16" data-line-number="16"><span class="co">-- MDU 0.9550170577020396</span></a>
+<a class="sourceLine" id="cb1-17" data-line-number="17"></a>
+<a class="sourceLine" id="cb1-18" data-line-number="18"><span class="ot">distance ::</span> <span class="dt">Double</span></a>
+<a class="sourceLine" id="cb1-19" data-line-number="19">distance <span class="fu">=</span> mduToKm mdu</a>
+<a class="sourceLine" id="cb1-20" data-line-number="20"><span class="co">-- 367109.51199772174</span></a>
+<a class="sourceLine" id="cb1-21" data-line-number="21"></a>
+<a class="sourceLine" id="cb1-22" data-line-number="22"><span class="co">-- Angular Size</span></a>
+<a class="sourceLine" id="cb1-23" data-line-number="23"><span class="ot">angularSize ::</span> <span class="dt">DecimalDegrees</span></a>
+<a class="sourceLine" id="cb1-24" data-line-number="24">angularSize <span class="fu">=</span> moonAngularSize mdu</a>
+<a class="sourceLine" id="cb1-25" data-line-number="25"><span class="co">-- DD 0.5425033990980761</span></a></code></pre></div>
+<p>To calculate refraction we can use <code>refract</code> function from <code>Data.Astro.Effects</code> module. It takes the observed altitude, temperature in degrees centigrade and barometric pressure in millibars.</p>
+<p>The observed altitude is always 0 if we calculate rise and set, good reasonable values for temperature and barometric pressure are 12 and 1013 respectively:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb2-1" data-line-number="1">r <span class="fu">=</span> refract <span class="dv">0</span> <span class="dv">12</span> <span class="dv">1013</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">-- DD 0.5665691228070175</span></a></code></pre></div>
+<p>Angular size correction is simple:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb3-1" data-line-number="1">s <span class="fu">=</span> <span class="fl">0.5</span> <span class="fu">*</span> angularSize</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="dt">DD</span> <span class="fl">0.24557263666302662</span></a></code></pre></div>
+<p>The refraction effect and angular size correction alter the apparent height of the object, we will use sum of them as a parameter of <code>riseAndSet2</code> function:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="ot">verticalShift ::</span> <span class="dt">DecimalDegrees</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">verticalShift <span class="fu">=</span> r <span class="fu">+</span> s</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">  <span class="kw">where</span> r <span class="fu">=</span> refract <span class="dv">0</span> <span class="dv">12</span> <span class="dv">1012</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">        s <span class="fu">=</span> <span class="fl">0.5</span> <span class="fu">*</span> angularSize</a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">-- DD 0.8115824612244301</span></a></code></pre></div>
+<p>Let’s calculate the Parallax effect now. <code>parallax</code> function of <code>Data.Astro.Effects</code> module “corrects” given equatorial coordinates, apart the coordinates of the celestial object it takes geographic coordinates of the observer and height above sea-level of the observer measured in metres, distance from the celestial object to the Earth measured in AU and the Universal Time:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb5-1" data-line-number="1">distance <span class="fu">=</span> moonDistance1 j2010MoonDetails jd</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">p <span class="fu">=</span> parallax london <span class="dv">20</span> distance jd (<span class="dt">EC1</span> <span class="dv">0</span> <span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co">-- EC1 { e1Declination = DD (-0.7020801857390149)</span></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co">--     , e1RightAscension = DH (-3.447510112899046e-2) }</span></a></code></pre></div>
+<p>Fortunately, <code>moonPosition2</code> function (which takes the parallax effect into account) is available in astro library since version 0.4.2.0.</p>
+<p>Now let’s summarise everything we talked about and calculate Moonrise and Moonset time:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="kw">import</span> <span class="dt">Data.Astro.Time.JulianDate</span></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="kw">import</span> <span class="dt">Data.Astro.Coordinate</span></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="kw">import</span> <span class="dt">Data.Astro.Types</span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="kw">import</span> <span class="dt">Data.Astro.Effects</span></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="kw">import</span> <span class="dt">Data.Astro.CelestialObject.RiseSet</span></a>
+<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="kw">import</span> <span class="dt">Data.Astro.Moon</span></a>
+<a class="sourceLine" id="cb6-9" data-line-number="9"><span class="kw">import</span> <span class="dt">Data.Astro.Moon.MoonDetails</span></a>
+<a class="sourceLine" id="cb6-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="ot">london ::</span> <span class="dt">GeographicCoordinates</span></a>
+<a class="sourceLine" id="cb6-12" data-line-number="12">london <span class="fu">=</span> <span class="dt">GeoC</span> <span class="fl">51.5074</span> (<span class="fu">-</span><span class="fl">0.1278</span>)</a>
+<a class="sourceLine" id="cb6-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="ot">dt ::</span> <span class="dt">LocalCivilTime</span></a>
+<a class="sourceLine" id="cb6-15" data-line-number="15">dt <span class="fu">=</span> lctFromYMDHMS (<span class="dt">DH</span> <span class="dv">1</span>) <span class="dv">2017</span> <span class="dv">7</span> <span class="dv">6</span> <span class="dv">10</span> <span class="dv">30</span> <span class="dv">0</span></a>
+<a class="sourceLine" id="cb6-16" data-line-number="16"></a>
+<a class="sourceLine" id="cb6-17" data-line-number="17"><span class="ot">today ::</span> <span class="dt">LocalCivilDate</span></a>
+<a class="sourceLine" id="cb6-18" data-line-number="18">today <span class="fu">=</span> lcdFromYMD (<span class="dt">DH</span> <span class="dv">1</span>) <span class="dv">2017</span> <span class="dv">7</span> <span class="dv">6</span></a>
+<a class="sourceLine" id="cb6-19" data-line-number="19"></a>
+<a class="sourceLine" id="cb6-20" data-line-number="20"><span class="ot">jd ::</span> <span class="dt">JulianDate</span></a>
+<a class="sourceLine" id="cb6-21" data-line-number="21">jd <span class="fu">=</span> lctUniversalTime dt</a>
+<a class="sourceLine" id="cb6-22" data-line-number="22"></a>
+<a class="sourceLine" id="cb6-23" data-line-number="23"><span class="co">-- distance from the Earth to the Moon in kilometres</span></a>
+<a class="sourceLine" id="cb6-24" data-line-number="24"><span class="ot">mdu ::</span> <span class="dt">MoonDistanceUnits</span></a>
+<a class="sourceLine" id="cb6-25" data-line-number="25">mdu <span class="fu">=</span> moonDistance1 j2010MoonDetails jd</a>
+<a class="sourceLine" id="cb6-26" data-line-number="26"></a>
+<a class="sourceLine" id="cb6-27" data-line-number="27"><span class="ot">distance ::</span> <span class="dt">Double</span></a>
+<a class="sourceLine" id="cb6-28" data-line-number="28">distance <span class="fu">=</span> mduToKm mdu</a>
+<a class="sourceLine" id="cb6-29" data-line-number="29"></a>
+<a class="sourceLine" id="cb6-30" data-line-number="30"><span class="co">-- Angular Size</span></a>
+<a class="sourceLine" id="cb6-31" data-line-number="31"><span class="ot">angularSize ::</span> <span class="dt">DecimalDegrees</span></a>
+<a class="sourceLine" id="cb6-32" data-line-number="32">angularSize <span class="fu">=</span> moonAngularSize mdu</a>
+<a class="sourceLine" id="cb6-33" data-line-number="33"></a>
+<a class="sourceLine" id="cb6-34" data-line-number="34"><span class="ot">position ::</span> <span class="dt">JulianDate</span> <span class="ot">-&gt;</span> <span class="dt">EquatorialCoordinates1</span></a>
+<a class="sourceLine" id="cb6-35" data-line-number="35">position jd <span class="fu">=</span> moonPosition2 j2010MoonDetails distance london height jd</a>
+<a class="sourceLine" id="cb6-36" data-line-number="36">  <span class="kw">where</span> distance <span class="fu">=</span> moonDistance1 j2010MoonDetails jd</a>
+<a class="sourceLine" id="cb6-37" data-line-number="37">        height <span class="fu">=</span> <span class="dv">20</span></a>
+<a class="sourceLine" id="cb6-38" data-line-number="38"></a>
+<a class="sourceLine" id="cb6-39" data-line-number="39"></a>
+<a class="sourceLine" id="cb6-40" data-line-number="40"><span class="ot">verticalShift ::</span> <span class="dt">DecimalDegrees</span></a>
+<a class="sourceLine" id="cb6-41" data-line-number="41">verticalShift <span class="fu">=</span> r <span class="fu">+</span> s</a>
+<a class="sourceLine" id="cb6-42" data-line-number="42">  <span class="kw">where</span> r <span class="fu">=</span> refract <span class="dv">0</span> <span class="dv">12</span> <span class="dv">1012</span></a>
+<a class="sourceLine" id="cb6-43" data-line-number="43">        s <span class="fu">=</span> <span class="fl">0.5</span> <span class="fu">*</span> angularSize</a>
+<a class="sourceLine" id="cb6-44" data-line-number="44"></a>
+<a class="sourceLine" id="cb6-45" data-line-number="45"><span class="ot">riseSet ::</span> <span class="dt">RiseSetMB</span></a>
+<a class="sourceLine" id="cb6-46" data-line-number="46">riseSet <span class="fu">=</span> riseAndSet2 <span class="fl">0.000001</span> position london verticalShift today</a>
+<a class="sourceLine" id="cb6-47" data-line-number="47"></a>
+<a class="sourceLine" id="cb6-48" data-line-number="48"><span class="ot">main ::</span> <span class="dt">IO</span> ()</a>
+<a class="sourceLine" id="cb6-49" data-line-number="49">main <span class="fu">=</span> print riseSet</a>
+<a class="sourceLine" id="cb6-50" data-line-number="50"></a>
+<a class="sourceLine" id="cb6-51" data-line-number="51"><span class="co">-- RiseSet</span></a>
+<a class="sourceLine" id="cb6-52" data-line-number="52"><span class="co">--  (Just (2017-07-06 18:48:44.5949 +1.0,DD 120.13250305991525))</span></a>
+<a class="sourceLine" id="cb6-53" data-line-number="53"><span class="co">--  (Just (2017-07-06 03:09:54.7904 +1.0,DD 241.7780054101992))</span></a></code></pre></div>
+<p><a href="https://www.timeanddate.com/moon/uk/london">timeamddate.com</a> gave the following results:</p>
+<p>Moonrise: 18:49, (120°)</p>
+<p>Moonset: 03:10, (242°)</p>
+<p>Those perfectly match with our results.</p>
+
+
+<div class="tags">Tags: <a href="../tag/astro.html">astro</a>, <a href="../tag/haskell.html">haskell</a></div>
+
+
+        </main>
+
+        <footer>
+            <i class="fa fa-copyright" aria-hidden="true"></i> 2017-2018 Alexander Ignatyev
+        </footer>
+
+        <script src="../js/scripts.js"></script>
+    </body>
+</html>

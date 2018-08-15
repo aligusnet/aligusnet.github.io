@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>AI - Statistics</title>
+        <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+        <link rel="stylesheet" href="./css/default.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.aligus.net/libs/aws-sdk/2.261.1/aws-lambda.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.38.3/plotly-cartesian.min.js"></script>
+        <script src="https://cdn.aligus.net/libs/fsstats/1.2.0/fsstats.min.js"></script>
+    </head>
+    <body>
+        <header class="global">
+          <div class="wrapper">
+            <div class="logo"><a href="./">AI</a></div>
+            <nav>
+              <div class="mobile-menu-icon fa fa-bars fa-lg"></div>
+              <div><a href="./">Home</a></div>
+              <div><a href="./projects.html">Projects</a></div>
+              <div><a href="./archive.html">Archive</a></div>
+              <div><a href="./tea-meetup-history.html">Tea Meetup</a></div>
+              <div><a href="./astro.html">Astro</a></div>
+              <div><a href="./stats.html">Stats</a></div>
+            </nav>
+          </div>
+        </header>
+
+        <main>
+            <h1>Statistics</h1>
+            <div class="stats-list">
+    <div class="stats-list-item">
+        <div id="bernoulli-caption" class="stats-caption">Bernoulli Distribution</div>
+        <div id="bernoulli" class="stats"></div>
+    </div>
+    <div class="stats-list-item">
+        <div id="binomial-caption" class="stats-caption">Binomial Distribution</div>
+        <div id="binomial" class="stats"></div>
+    </div>
+    <div class="stats-list-item">
+        <div id="poisson-caption" class="stats-caption">Poisson Distribution</div>
+        <div id="poisson" class="stats"></div>
+    </div>
+</div>
+<div class="stats-list">
+    <div class="stats-list-item">
+        <div id="normal-caption" class="stats-caption">Normal Distribution</div>
+        <div id="normal" class="stats"></div>
+    </div>
+    <div class="stats-list-item">
+        <div id="students-caption" class="stats-caption">Student's T-Distribution</div>
+        <div id="students" class="stats"></div>
+    </div>
+</div>
+<div class="stats-list">
+    <div class="stats-list-item">
+        <div id="summary-statistics-caption" class="stats-caption">Summary Statistics</div>
+        <div id="summary-statistics" class="stats"></div>
+    </div>
+    <div class="stats-list-item">
+        <div id="onePopulationMeanTest-caption" class="stats-caption">One Sample Mean Tests</div>
+        <div id="onePopulationMeanTest" class="stats"></div>
+    </div>
+</div>
+
+<script src="https://cdn.aligus.net/libs/fsstats/1.2.0/port.js"></script>
+
+        </main>
+
+        <footer>
+            <i class="fa fa-copyright" aria-hidden="true"></i> 2017-2018 Alexander Ignatyev
+        </footer>
+
+        <script src="./js/scripts.js"></script>
+    </body>
+</html>
