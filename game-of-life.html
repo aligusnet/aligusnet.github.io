@@ -4,11 +4,11 @@
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge,chrome=1">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>AI - Archive</title>
+        <title>AI - Conway's Game of Life</title>
         <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
         <link rel="stylesheet" href="./css/default.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        
+        <script src="https://www.aligus.net/cdn/libs/game-of-life/1.0.0/game-of-life.min.js"></script>
     </head>
     <body>
         <header class="global">
@@ -28,34 +28,15 @@
         </header>
 
         <main>
-            <h1>Archive</h1>
-            <p>
-Browse by tag: <a href="./tag/astro.html">astro (1)</a>, <a href="./tag/haskell.html">haskell (2)</a>, <a href="./tag/math.html">math (1)</a>, <a href="./tag/optimer.html">optimer (1)</a>
-</p>
-
-<ul class="archive">
-    
-        <li>
-            <a href="./posts/2018-07-01-pca.html">PCA</a> -  1 July 2018
-            
-        </li>
-    
-        <li>
-            <a href="./posts/2017-07-08-moon-effects.html">Astronomical effects in Moonrise/Moonset calculations</a> -  8 July 2017
-            <div>Among the other visible celestial objects the Moon is one of the most difficult to calculate.</div>
-        </li>
-    
-        <li>
-            <a href="./posts/2016-06-02-haskell-cabal.html">The Haskell Cabal</a> -  2 June 2016
-            <div>Cabal is a build and package manager for Haskell. It is considered as slightly outdated in modern Haskell development. Mostly because the new system called Stack has been introduced. But Stack uses Cabal under the hood and understanding of how Cabal works might be useful even if you use Stack for building and packaging.</div>
-        </li>
-    
-        <li>
-            <a href="./posts/2014-07-01-optimer-benchmarks.html">Comparing different implementations of Branch and Bound Method</a> -  1 July 2014
-            
-        </li>
-    
-</ul>
+            <h1>Conway's Game of Life</h1>
+            <div class="game-of-life">
+    <div id="elm"></div>
+    <script>
+        let app = Elm.Main.init({
+            node: document.getElementById('elm')
+        });
+    </script>
+</div>
 
         </main>
 
